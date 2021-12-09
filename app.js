@@ -1,112 +1,44 @@
+// library imports
 const express = require('express');
-
-
 const dotenv = require('dotenv').config()
 const chalk = require('chalk');
-var validator = require('validator');
+const validator = require('validator');
+const figlet = require('figlet');
 
-const log = console.log;
-
-
-const printReq = object => {
-	for (const [key, value] of Object.entries(object)) {
-		log(process.env[key])
-	}
-}
-
-const required_keys = {
-	DB_HOST: {
-		available: false,
-		checked: false,
-		required: false,
-		default_fallback: "localhost"
-	}, DB_USER: {
-		available: false,
-		checked: false,
-		required: false,
-		default_fallback: "root"
-	}, DB_PASS: {
-		available: false,
-		checked: false,
-		required: true
-	}, DB_PORT: {
-		available: false,
-		checked: false,
-		required: false,
-		default_fallback: "3306"
-	}, PORT: {
-		available: false,
-		checked: false,
-		required: false,
-		default_fallback: "3001"
-	}
-}
+console.log(chalk.hex('#005eb8').bold(figlet.textSync('API runs!', {
+	font: 'Doom',
+	horizontalLayout: 'default',
+	verticalLayout: 'default',
+	width: 80,
+	whitespaceBreak: true
+})));
 
 
-function updateObjProp(obj, value, propPath) {
-	const [head, ...rest] = propPath.split('.');
-
-	!rest.length
-		? obj[head] = value
-		: updateObjProp(obj[head], value, rest.join('.'));
-}
-
-
-
-
-
-
-const checkKeyAvailability = (key, value) => {
-	// Skip checking if already checked
-	if (value?.checked) return;
-	// check if key is in process.env
-	if (key in process.env && process.env[key].trim() !== "") {
-		// required_keys[key][available] = true
-		updateObjProp(required_keys, true, key + '.checked');
-		updateObjProp(required_keys, true, key + '.available');
-		return;
-	} else {
-		if (value?.required) throw new Error(`environment var key "${chalk.bold(key)}" is missing or only whitespace!`)
-		process.env[key] = required_keys[key]?.default_fallback;
-		updateObjProp(required_keys, true, key + '.available');
-	}
-}
-const checkObj = (obj) => {
-	// Check keys from required_keys --> object
-	for (const [key, value] of Object.entries(obj)) {
-		checkKeyAvailability(key, value)
-	}
-}
-
-
-checkObj(required_keys)
-
-
-
-log(chalk.bgGreen.bold('env has been checked!'));
-
-
-// check if host is ip or localhost
-log("is valid DB_HOST: " + (validator.isIP(process.env.DB_HOST, 4) || process.env.DB_HOST === "localhost"))
-
-
-
-const DB_PORT = process.env.DB_PORT;
-const PORT = process.env.PORT || '3001';
-
+// own module imports
+const print = require('./queryProcessEnv')
+const check = require('./getEnv')
 
 const app = express();
 
-/**
- * Middleware
- */
+let tag = "app"
+const a = `[${tag}] `;
+
+
+check.start(check.required_keys)
+
+// check if host is ip or localhost
+// console.log("is valid DB_HOST: " + (validator.isIP(process.env.DB_HOST, 4) || process.env.DB_HOST === "localhost"))
+
+
+const DB_PORT = process.env.DB_PORT;
+const PORT = process.env.PORT;
+
+
+// middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-/**
- * Routes
- */
-
+// routes
 app.get('/', (request, response) => {
 	response.status(200).send("This is not why you're here. Head to /user/:id and replace :id with your user id")
 })
@@ -114,9 +46,7 @@ app.get('/', (request, response) => {
 const userRouter = require('./routes/user');
 app.use('/user', userRouter);
 
-/**Start listening */
+// start app
 app.listen(PORT, () => {
-	console.log(`Listening for requests on port ${PORT}`)
+	console.log(chalk.hex('#005eb8')(a + `Listening for requests on port ${PORT}`))
 })
-
-log("\n" + chalk.hex('#005eb8').bold('app running...'));

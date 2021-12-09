@@ -12,13 +12,12 @@ router.get('/:id', async function (req, res) {
 	} catch (error) {
 		res.status(400).send(error.message)
 	}
-
-
-	res.status(200).json({ id: req.params.id })
 });
 
 router.post('/register', async function (req, res) {
+	console.log(req.body);
 	try {
+
 		const { email, password } = req.body;
 
 		const encryptedPassword = await bcrypt.hash(password, 10)
@@ -42,6 +41,7 @@ router.post('/login', async function (req, res) {
 
 			const isValid = await bcrypt.compare(password, rows[0].password)
 			res.status(200).json({ valid_password: isValid });
+			return;
 		}
 		res.status(200).send(`User with id ${id} was not found`);
 

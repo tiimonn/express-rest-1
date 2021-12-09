@@ -1,3 +1,4 @@
+const chalk = require("chalk");
 const log = console.log;
 
 const required_keys = {
@@ -52,10 +53,12 @@ const checkKeyAvailability = (key, value) => {
 	}
 }
 
-
-module.exports = function (obj) {
+exports.start = (obj) => {
 	// Check keys from required_keys --> object
 	for (const [key, value] of Object.entries(obj)) {
 		checkKeyAvailability(key, value)
 	}
-};
+	console.log(chalk.green("[app] ") + chalk.green.bold('env has been checked!'));
+}
+
+exports.required_keys = required_keys;
