@@ -1,24 +1,30 @@
 {
-  "name": "express-rest-1",
-  "version": "1.0.0",
-  "description": "A simple express-js rest api with a mariadb database",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tiimonn/express-rest-1.git"
-  },
-  "keywords": [
-    "express",
-    "rest",
-    "mariadb"
-  ],
-  "author": "tiimonn",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tiimonn/express-rest-1/issues"
-  },
-  "homepage": "https://github.com/tiimonn/express-rest-1#readme"
+	"name": "express-rest-1",
+	"version": "1.0.0",
+	"description": "A simple express-js rest api with a mariadb database",
+	"main": "app.js",
+	"scripts": {
+		"dev": "nodemon app.js",
+		"start": "node app.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/tiimonn/express-rest-1.git"
+	},
+	"keywords": [
+		"express",
+		"rest",
+		"mariadb"
+	],
+	"author": "tiimonn",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/tiimonn/express-rest-1/issues"
+	},
+	"homepage": "https://github.com/tiimonn/express-rest-1#readme",
+	"dependencies": {
+		"chalk": "^4.1.2",
+		"dotenv": "^10.0.0",
+		"validator": "^13.7.0"
+	}
 }
