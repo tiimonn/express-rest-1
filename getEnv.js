@@ -1,18 +1,4 @@
-const express = require('express');
-
-
-const dotenv = require('dotenv').config()
-const chalk = require('chalk');
-var validator = require('validator');
-
 const log = console.log;
-
-
-const printReq = object => {
-	for (const [key, value] of Object.entries(object)) {
-		log(process.env[key])
-	}
-}
 
 const required_keys = {
 	DB_HOST: {
@@ -42,7 +28,6 @@ const required_keys = {
 	}
 }
 
-
 function updateObjProp(obj, value, propPath) {
 	const [head, ...rest] = propPath.split('.');
 
@@ -50,11 +35,6 @@ function updateObjProp(obj, value, propPath) {
 		? obj[head] = value
 		: updateObjProp(obj[head], value, rest.join('.'));
 }
-
-
-
-
-
 
 const checkKeyAvailability = (key, value) => {
 	// Skip checking if already checked
@@ -71,52 +51,11 @@ const checkKeyAvailability = (key, value) => {
 		updateObjProp(required_keys, true, key + '.available');
 	}
 }
-const checkObj = (obj) => {
+
+
+module.exports = function (obj) {
 	// Check keys from required_keys --> object
 	for (const [key, value] of Object.entries(obj)) {
 		checkKeyAvailability(key, value)
 	}
-}
-
-
-checkObj(required_keys)
-
-
-
-log(chalk.bgGreen.bold('env has been checked!'));
-
-
-// check if host is ip or localhost
-log("is valid DB_HOST: " + (validator.isIP(process.env.DB_HOST, 4) || process.env.DB_HOST === "localhost"))
-
-
-
-const DB_PORT = process.env.DB_PORT;
-const PORT = process.env.PORT || '3001';
-
-
-const app = express();
-
-/**
- * Middleware
- */
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-/**
- * Routes
- */
-
-app.get('/', (request, response) => {
-	response.status(200).send("This is not why you're here. Head to /user/:id and replace :id with your user id")
-})
-
-const userRouter = require('./routes/user');
-app.use('/user', userRouter);
-
-/**Start listening */
-app.listen(PORT, () => {
-	console.log(`Listening for requests on port ${PORT}`)
-})
-
-log("\n" + chalk.hex('#005eb8').bold('app running...'));
+};
